@@ -1,0 +1,6 @@
+streamlit
+openai
+duckduckgo-search
+agno
+pillow
+requests
