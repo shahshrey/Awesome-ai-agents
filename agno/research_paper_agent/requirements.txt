@@ -1,0 +1,8 @@
+streamlit
+agno
+openai
+PyPDF2
+requests
+pandas
+pydantic
+structlog 
