@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Bedtime Story Voice Agent - Kid-friendly stories with narration."""
 
 import asyncio
 from pathlib import Path
@@ -7,22 +6,17 @@ from typing import Optional
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
-# ── 1. Config ────────────────────────────────────────────────────────────────
 MODEL_NAME = "gpt-4o"
 TTS_MODEL = "gpt-4o-mini-tts"
-VOICE = "nova"  # default voice, can be overridden
-WORDS_PER_MIN = 150  # speaking pace for children's stories
+VOICE = "nova"
+WORDS_PER_MIN = 150
 
-# Story configuration
 DEFAULT_DURATION_MINUTES = 5
 MIN_DURATION_MINUTES = 2
 MAX_DURATION_MINUTES = 15
 
-# ── 2. Pydantic Schemas ──────────────────────────────────────────────────────
-
 
 class StoryTheme(BaseModel):
-    """Theme configuration for bedtime stories."""
     main_character: str
     setting: str
     mood: str = "calm and soothing"
@@ -30,20 +24,17 @@ class StoryTheme(BaseModel):
 
 
 class StoryOutput(BaseModel):
-    """Generated story output."""
     title: str
     story: str
     estimated_duration_minutes: float
 
 
-# ── 3. Story Generation ──────────────────────────────────────────────────────
 async def generate_bedtime_story(
     theme: str,
     age_range: str = "4-8 years",
     duration_minutes: int = DEFAULT_DURATION_MINUTES,
     include_moral: bool = True
 ) -> StoryOutput:
-    """Generate a bedtime story based on theme and parameters."""
     try:
         client = AsyncOpenAI()
         word_limit = duration_minutes * WORDS_PER_MIN
@@ -82,11 +73,10 @@ async def generate_bedtime_story(
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.8,  # More creative for storytelling
+            temperature=0.8,
             max_tokens=2000
         )
         
-        # Parse response
         content = response.choices[0].message.content
         if not content:
             raise ValueError("No content in response")
@@ -119,17 +109,14 @@ async def generate_bedtime_story(
         raise
 
 
-# ── 4. Text-to-Speech ────────────────────────────────────────────────────────
 async def generate_story_audio(
     text: str,
     voice: str = VOICE,
     output_filename: str = "bedtime_story.mp3"
 ) -> Path:
-    """Convert story text to speech with kid-friendly narration."""
     try:
         client = AsyncOpenAI()
         
-        # Add TTS instructions for bedtime story narration
         tts_instructions = """You are narrating a bedtime story for children. 
         Speak in a calm, gentle, and soothing voice. 
         Use a slow, relaxed pace with natural pauses. 
@@ -143,10 +130,9 @@ async def generate_story_audio(
             input=text,
             instructions=tts_instructions,
             response_format="mp3",
-            speed=0.9  # Slightly slower for bedtime stories
+            speed=0.9
         )
         
-        # Save to file
         output_path = Path(__file__).parent / output_filename
         with open(output_path, "wb", encoding=None) as f:
             f.write(audio_response.content)
@@ -159,7 +145,6 @@ async def generate_story_audio(
         raise
 
 
-# ── 5. Complete Story Pipeline ───────────────────────────────────────────────
 async def create_bedtime_story_with_audio(
     theme: str,
     age_range: str = "4-8 years",
@@ -167,9 +152,7 @@ async def create_bedtime_story_with_audio(
     voice: str = VOICE,
     include_moral: bool = True
 ) -> tuple[StoryOutput, Path]:
-    """Generate a complete bedtime story with audio narration."""
     try:
-        # Generate the story
         print(f"Generating {duration_minutes}-minute bedtime story about '{theme}'...")
         story_output = await generate_bedtime_story(
             theme=theme,
@@ -178,7 +161,6 @@ async def create_bedtime_story_with_audio(
             include_moral=include_moral
         )
         
-        # Generate audio
         print(f"Creating audio narration with voice '{voice}'...")
         full_text = f"{story_output.title}\n\n{story_output.story}"
         audio_path = await generate_story_audio(
@@ -194,14 +176,11 @@ async def create_bedtime_story_with_audio(
         raise
 
 
-# ── 6. Utility Functions ─────────────────────────────────────────────────────
 def validate_duration(duration: int) -> int:
-    """Validate and clamp story duration to acceptable range."""
     return max(MIN_DURATION_MINUTES, min(duration, MAX_DURATION_MINUTES))
 
 
 def get_age_appropriate_themes(age_range: str) -> list[str]:
-    """Get suggested themes based on age range."""
     themes_by_age = {
         "2-4 years": [
             "Friendly animals going to sleep",
@@ -226,9 +205,7 @@ def get_age_appropriate_themes(age_range: str) -> list[str]:
     return themes_by_age.get(age_range, themes_by_age["4-8 years"])
 
 
-# ── Main (for testing) ───────────────────────────────────────────────────────
 if __name__ == "__main__":
-    # Test the story generation
     async def test_story():
         story, audio = await create_bedtime_story_with_audio(
             theme="A sleepy bunny looking for the softest cloud to sleep on",

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Streamlit app for Bedtime Story Voice Agent."""
 
 import streamlit as st
 import asyncio
@@ -15,7 +14,6 @@ from voice_agent import (
     DEFAULT_DURATION_MINUTES
 )
 
-# Voice options for TTS
 VOICE_OPTIONS = {
     "nova": "Nova (Friendly & Warm)",
     "alloy": "Alloy (Neutral & Clear)", 
@@ -25,12 +23,10 @@ VOICE_OPTIONS = {
     "shimmer": "Shimmer (Gentle & Soothing)"
 }
 
-# Age ranges
 AGE_RANGES = ["2-4 years", "4-8 years", "8-12 years"]
 
 
 def init_session_state():
-    """Initialize session state variables."""
     if "story_generated" not in st.session_state:
         st.session_state.story_generated = False
     if "current_story" not in st.session_state:
@@ -40,17 +36,14 @@ def init_session_state():
 
 
 def handle_async(coro):
-    """Handle async functions in Streamlit."""
     try:
         return asyncio.run(coro)
     except RuntimeError:
-        # Handle event loop already running
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coro)
 
 
 def main():
-    """Main Streamlit app."""
     st.set_page_config(
         page_title="🌙 Bedtime Story Generator",
         page_icon="🌙",
@@ -59,7 +52,6 @@ def main():
     
     init_session_state()
     
-    # Custom CSS for glassy, kid-friendly design
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Bubblegum+Sans&family=Quicksand:wght@400;600;700&display=swap');
@@ -79,7 +71,6 @@ def main():
       --muted: #4a5568;
     }
 
-    /* Animated gradient background - apply to body */
     body {
       background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
       background-size: 400% 400%;
@@ -101,7 +92,6 @@ def main():
       100% { background-position: 0% 50%; }
     }
 
-    /* Floating clouds background element */
     .cloud-container {
       position: fixed;
       top: 0;
@@ -146,7 +136,6 @@ def main():
       to { transform: translateX(calc(100vw + 200px)); }
     }
 
-    /* Twinkling stars */
     .stars {
       position: fixed;
       top: 0;
@@ -180,7 +169,6 @@ def main():
       50% { opacity: 0.5; transform: scale(1.1); }
     }
 
-    /* Main content - ensure visibility */
     .main .block-container {
       position: relative;
       z-index: 10;
@@ -191,7 +179,6 @@ def main():
       z-index: 10;
     }
 
-    /* Typography with fun fonts */
     h1, h2, h3, h4 {
       font-family: 'Bubblegum Sans', 'Fredoka', cursive !important;
       color: white !important;
@@ -204,7 +191,6 @@ def main():
       font-weight: 500;
     }
     
-    /* Dark text in light background containers */
     .story-box {
       color: #2d3748 !important;
     }
@@ -213,7 +199,6 @@ def main():
       color: #2d3748 !important;
     }
     
-    /* Glass cards should have white text for visibility */
     .glass-card {
       background: rgba(0, 0, 0, 0.3) !important;
       color: white !important;
@@ -236,7 +221,6 @@ def main():
       text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
     
-    /* Make emojis larger in glass cards */
     .glass-card span[style*="font-size: 2rem"] {
       font-size: 2.5rem !important;
       filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
@@ -248,7 +232,6 @@ def main():
       color: #2d3748 !important;
     }
     
-    /* Info boxes specifically */
     [data-testid="stInfo"] {
       background: rgba(255, 255, 255, 0.9) !important;
       color: #2d3748 !important;
@@ -259,7 +242,6 @@ def main():
       color: #2d3748 !important;
     }
 
-    /* Animated title */
     .stTitle, .stMarkdown h1 {
       text-align: center;
       background: linear-gradient(45deg, #ffd93d, #6bcf7f, #ff6b9d, #c7ceea);
@@ -279,7 +261,6 @@ def main():
 
     div.block-container { padding-top: 2rem; }
 
-    /* Glassy sidebar with rainbow border */
     div[data-testid="stSidebar"] {
       background: rgba(255, 255, 255, 0.95) !important;
       backdrop-filter: blur(20px) saturate(180%);
@@ -293,7 +274,6 @@ def main():
       color: #2d3748 !important;
     }
 
-    /* Playful buttons with hover effects */
     div.stButton > button, button[kind="primary"] {
       font-family: 'Fredoka', sans-serif !important;
       font-weight: 600 !important;
@@ -338,7 +318,6 @@ def main():
       border-color: var(--accent);
     }
 
-    /* Glassy input fields */
     input, textarea, select, .stTextArea textarea, .stSelectbox, .stSlider, [data-baseweb="select"] > div {
       border-radius: 20px !important;
       font-family: 'Quicksand', sans-serif !important;
@@ -353,7 +332,6 @@ def main():
       transition: all 0.3s ease !important;
     }
     
-    /* Simple select slider styling with glass effect */
     .stSelectSlider {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -369,16 +347,12 @@ def main():
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     
-    /* Form labels - specific styling per component */
     .stTextInput label, .stTextArea label, .stSelectbox label, .stCheckbox label {
       color: white !important;
       font-weight: 600 !important;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
     
-    /* Slider and SelectSlider labels are styled separately above for better visibility */
-    
-    /* Checkbox specific styling */
     .stCheckbox > label {
       background: rgba(255, 255, 255, 0.1);
       padding: 8px 12px;
@@ -396,7 +370,6 @@ def main():
       background: rgba(255, 255, 255, 0.25) !important;
     }
 
-    /* Glassy cards with gradient borders */
     .story-box {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(20px) saturate(180%);
@@ -441,7 +414,6 @@ def main():
       transform: rotate(15deg);
     }
 
-    /* Theme suggestion bubbles */
     .theme-suggestion {
       background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.25) 0%, 
@@ -463,7 +435,6 @@ def main():
       box-shadow: 0 10px 30px rgba(31, 38, 135, 0.3);
     }
 
-    /* Expander with rainbow gradient */
     [data-testid="stExpander"] {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(10px);
@@ -473,7 +444,6 @@ def main():
       box-shadow: 0 4px 20px rgba(31, 38, 135, 0.15);
     }
 
-    /* Fun metrics cards */
     [data-testid="stMetric"] {
       background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.9) 0%, 
@@ -490,7 +460,6 @@ def main():
       transform: translateY(-2px);
     }
 
-    /* Colorful alerts */
     [data-testid="stAlert"] {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -500,7 +469,6 @@ def main():
       color: #2d3748;
     }
 
-    /* Success message animation */
     [data-testid="stSuccess"] {
       background: linear-gradient(135deg, 
         rgba(107, 207, 127, 0.3) 0%, 
@@ -513,14 +481,12 @@ def main():
       50% { transform: translateY(-10px); }
     }
 
-    /* Error message */
     [data-testid="stError"] {
       background: linear-gradient(135deg, 
         rgba(255, 107, 157, 0.3) 0%, 
         rgba(255, 107, 157, 0.2) 100%);
     }
 
-    /* Simple, clean slider styling with glass effect */
     .stSlider {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -536,7 +502,6 @@ def main():
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Audio player styling */
     audio {
       width: 100%;
       border-radius: 20px;
@@ -544,7 +509,6 @@ def main():
       backdrop-filter: blur(10px);
     }
 
-    /* Download button special styling */
     .stDownloadButton > button {
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
       border: none;
@@ -555,19 +519,16 @@ def main():
       background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
     }
 
-    /* Spinner animation */
     [data-testid="stSpinner"] > div {
       border-color: var(--accent) transparent var(--accent-2) transparent;
     }
 
-    /* Small helpers */
     .small-note { 
       color: rgba(255, 255, 255, 0.9); 
       font-size: 0.9rem;
       font-weight: 500;
     }
     
-    /* Help text and captions */
     .stTextInput > div > div > small,
     .stTextArea > div > div > small,
     .stSelectbox > div > div > small,
@@ -576,7 +537,6 @@ def main():
       color: rgba(255, 255, 255, 0.7) !important;
     }
     
-    /* Theme button specific - ensure visibility */
     [data-testid*="column"] button {
       min-height: 38px;
     }
@@ -595,7 +555,6 @@ def main():
       box-shadow: 0 4px 15px rgba(31, 38, 135, 0.2);
     }
 
-    /* Floating animation for emojis */
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-20px); }
@@ -606,18 +565,15 @@ def main():
       animation: float 3s ease-in-out infinite;
     }
     
-    /* Final overrides for visibility */
     .stMarkdown > div > p {
       color: white !important;
     }
     
-    /* Ensure headers in main content are visible */
     .stMarkdown h3 {
       color: white !important;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     
-    /* Select boxes need dark text */
     [data-baseweb="select"] {
       background-color: rgba(255, 255, 255, 0.9) !important;
     }
@@ -635,7 +591,6 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    # Animated header with floating emojis
     st.markdown(
         """
         <h1 style='text-align: center; font-size: 3.5rem; margin-bottom: 0;'>
@@ -656,7 +611,6 @@ def main():
         unsafe_allow_html=True
     )
     
-    # Sidebar for API configuration
     with st.sidebar:
         st.markdown(
             "<h2 style='text-align: center;'>🔮 <span style='background: linear-gradient(90deg, #ffd93d, #6bcf7f); "
@@ -664,7 +618,6 @@ def main():
             unsafe_allow_html=True
         )
         
-        # API Key section with glass container
         st.markdown(
             "<h3 style='text-align: center;'>"
             "<span class='floating-emoji'>🔑</span> "
@@ -710,7 +663,6 @@ def main():
         
         st.markdown("---")
         
-        # Voice selection with glass container
         st.markdown(
             "<h3 style='text-align: center;'>"
             "<span class='floating-emoji'>🎤</span> "
@@ -758,11 +710,9 @@ def main():
             unsafe_allow_html=True
         )
     
-    # Main content area
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        # Story theme input with animated icon
         st.markdown(
             "<h3 style='text-align: center;'>"
             "<span class='floating-emoji'>🎨</span> "
@@ -771,7 +721,6 @@ def main():
             unsafe_allow_html=True
         )
         
-        # Age range selection
         age_range = st.select_slider(
             "Age Range",
             options=AGE_RANGES,
@@ -779,7 +728,6 @@ def main():
             help="Select the appropriate age range for the story"
         )
         
-        # Show theme suggestions with colorful design
         st.markdown(
             "<p style='text-align: center; font-weight: 600; font-size: 1.1rem;'>"
             "<span class='floating-emoji'>💫</span> "
@@ -799,7 +747,6 @@ def main():
                 ):
                     st.session_state.selected_theme = theme
         
-        # Custom theme input
         theme_input = st.text_area(
             "Or describe your own story idea:",
             placeholder=(
@@ -810,7 +757,6 @@ def main():
             value=getattr(st.session_state, "selected_theme", "")
         )
         
-        # Story options
         include_moral = st.checkbox(
             "Include a gentle life lesson",
             value=True,
@@ -818,7 +764,6 @@ def main():
         )
     
     with col2:
-        # Duration settings with playful design
         st.markdown(
             "<h3 style='text-align: center;'>"
             "<span class='floating-emoji'>⏱️</span> "
@@ -852,7 +797,6 @@ def main():
             unsafe_allow_html=True
         )
         
-        # Fun facts box with animations
         st.markdown(
             """
             <h3 style='text-align: center;'>
@@ -870,7 +814,6 @@ def main():
             unsafe_allow_html=True
         )
     
-    # Generate story button
     st.markdown("---")
     
     if st.button(
@@ -886,7 +829,6 @@ def main():
         else:
             with st.spinner("✨ Creating your magical story..."):
                 try:
-                    # Generate story
                     story_output, audio_path = handle_async(
                         create_bedtime_story_with_audio(
                             theme=theme_input,
@@ -897,7 +839,6 @@ def main():
                         )
                     )
                     
-                    # Store in session state
                     st.session_state.story_generated = True
                     st.session_state.current_story = story_output
                     st.session_state.audio_path = audio_path
@@ -909,11 +850,9 @@ def main():
                 except Exception as e:
                     st.error(f"😔 Oops! Something went wrong: {str(e)}")
     
-    # Display generated story
     if st.session_state.story_generated and st.session_state.current_story:
         st.markdown("---")
         
-        # Animated story title
         st.markdown(
             f"""
             <h2 style='text-align: center; font-size: 2.5rem; margin: 30px 0;'>
@@ -928,7 +867,6 @@ def main():
             unsafe_allow_html=True
         )
         
-        # Audio player with colorful design
         st.markdown(
             """
             <h3 style='text-align: center;'>
@@ -945,7 +883,6 @@ def main():
         if st.session_state.audio_path and Path(st.session_state.audio_path).exists():
             st.audio(str(st.session_state.audio_path), format="audio/mp3")
             
-            # Download button
             with open(st.session_state.audio_path, "rb") as audio_file:
                 audio_bytes = audio_file.read()
                 filename = f"bedtime_story_{st.session_state.current_story.title.lower().replace(' ', '_')}.mp3"
@@ -957,14 +894,12 @@ def main():
                     mime="audio/mp3"
                 )
         
-        # Story text with magical design
         with st.expander("📜✨ Read the Magical Story ✨📜", expanded=True):
             st.markdown(
                 f"<div class='story-box'>{st.session_state.current_story.story}</div>",
                 unsafe_allow_html=True
             )
         
-        # Story info
         col1, col2, col3 = st.columns(3)
         with col1:
             st.metric(
@@ -976,7 +911,6 @@ def main():
         with col3:
             st.metric("🎤 Voice", VOICE_OPTIONS[selected_voice_key].split()[0])
         
-        # Generate another story button with animation
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("🌈 Create Another Magical Adventure! 🦄", use_container_width=True):
             st.session_state.story_generated = False
@@ -984,7 +918,6 @@ def main():
             st.session_state.audio_path = None
             st.rerun()
     
-    # Animated footer
     st.markdown("---")
     st.markdown(
         """
