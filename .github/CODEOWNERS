@@ -1,0 +1,32 @@
+# Code Owners for awesome-ai-agents repository
+# 
+# This file defines individuals or teams that are responsible for code in this repository.
+# When a pull request is opened, the code owners will automatically be requested for review.
+#
+# Learn more about CODEOWNERS: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global code ownership - applies to all files unless overridden below
+* @shahshrey
+
+# AI Agent implementations
+/agno/ @shahshrey
+/langgraph/ @shahshrey
+/openai-sdk/ @shahshrey
+
+# Documentation files
+*.md @shahshrey
+/docs/ @shahshrey
+
+# Configuration and setup files
+/.github/ @shahshrey
+requirements.txt @shahshrey
+*.json @shahshrey
+*.yml @shahshrey
+*.yaml @shahshrey
+
+# Specific agent directories with specialized requirements
+/agno/mythical_creature_designer_agent/ @shahshrey
+/agno/research_paper_agent/ @shahshrey
+/langgraph/company_research_agent/ @shahshrey
+/langgraph/memory-agent_simple/ @shahshrey
+/openai-sdk/voice-agents/ @shahshrey
