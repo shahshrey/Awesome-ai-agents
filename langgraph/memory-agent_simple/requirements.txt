@@ -1,0 +1,7 @@
+langchain
+langchain-openai
+langchain-core
+langgraph
+langgraph-cli[inmem]
+pydantic
+typing-extensions
