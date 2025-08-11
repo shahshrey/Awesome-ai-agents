@@ -1,0 +1,9 @@
+openai>=1.14.0
+streamlit>=1.33.0
+qdrant-client>=1.7.0
+fastembed>=0.2.0
+python-dotenv>=1.0.0
+pydantic>=2.6.0
+langchain>=0.1.0
+langchain-community>=0.0.20
+pypdf>=4.0.0 
