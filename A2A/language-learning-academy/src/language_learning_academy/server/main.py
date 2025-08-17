@@ -97,7 +97,7 @@ def main():
 
     public_agent_card = AgentCard(
         name='Language Learning Academy - LLM Edition',
-        description='An intelligent AI-powered language learning assistant using real LLMs (GPT-4o/Gemini) with LangGraph for advanced vocabulary, grammar, conversation practice, and personalized tutoring across multiple languages',
+        description='An intelligent AI-powered language learning assistant using real LLMs (gpt-5-2025-08-07) with LangGraph for advanced vocabulary, grammar, conversation practice, and personalized tutoring across multiple languages',
         url=f'http://localhost:{SERVER_PORT}/',
         version='2.0.0',
         default_input_modes=['text'],
@@ -116,7 +116,7 @@ def main():
     extended_agent_card = public_agent_card.model_copy(
         update={
             'name': 'Language Learning Academy - Premium LLM Edition',
-            'description': 'Advanced AI language tutor powered by GPT-4o/Gemini with LangGraph orchestration, featuring personalized learning paths, cultural context, and intelligent conversation practice for authenticated users',
+            'description': 'Advanced AI language tutor powered by gpt-5-2025-08-07/Gemini with LangGraph orchestration, featuring personalized learning paths, cultural context, and intelligent conversation practice for authenticated users',
             'version': '2.0.1',
             'skills': [
                 vocabulary_skill,

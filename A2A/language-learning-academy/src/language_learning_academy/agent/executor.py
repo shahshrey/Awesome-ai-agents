@@ -27,6 +27,42 @@ from pydantic import BaseModel
 
 memory = MemorySaver()
 
+def _build_profile_preamble(p: dict[str, str]) -> str:
+    native_lang = p.get('native_language', 'English')
+    goal = p.get('learning_goal', 'Travel')
+    persona = p.get('tutor_persona', 'Friendly')
+    strictness = p.get('correction_strictness', 'Standard')
+    
+    persona_style = {
+        'Friendly': 'Be warm, encouraging, and supportive. Use casual language and emoticons where appropriate.',
+        'Formal': 'Maintain a professional, academic tone. Be precise and structured.',
+        'Coach': 'Be motivating and goal-oriented. Push the learner to improve with constructive feedback.'
+    }.get(persona, 'Be warm and encouraging.')
+    
+    strictness_style = {
+        'Gentle': 'Point out errors softly, focus on communication over perfection.',
+        'Standard': 'Balance error correction with encouragement.',
+        'Strict': 'Correct all errors thoroughly with detailed explanations.'
+    }.get(strictness, 'Balance correction with encouragement.')
+    
+    goal_focus = {
+        'Travel': 'Focus on practical phrases, cultural etiquette, and survival vocabulary.',
+        'Business': 'Emphasize formal language, professional communication, and industry terms.',
+        'Exam prep': 'Focus on grammar rules, academic vocabulary, and test-taking strategies.'
+    }.get(goal, 'Focus on practical usage.')
+    
+    return (
+        f"LEARNER PROFILE:\n"
+        f"Native language: {native_lang}\n"
+        f"Learning goal: {goal}\n"
+        f"Preferred teaching style: {persona_style}\n"
+        f"Error correction approach: {strictness_style}\n"
+        f"Content focus: {goal_focus}\n\n"
+        f"IMPORTANT: Provide all explanations, clarifications, and meta-commentary in {native_lang} "
+        f"while keeping target language examples, phrases, and vocabulary unchanged. "
+        f"Adapt your response style and content to match the learner's preferences."
+    )
+
 @tool(description="Get vocabulary lesson for language learning")
 def get_vocabulary_lesson(
     language: str = 'spanish',
@@ -93,7 +129,7 @@ class LanguageLearningAgent:
 
     def __init__(self):
         self.model = ChatOpenAI(
-            model=os.getenv('OPENAI_MODEL', 'gpt-4o'),
+            model=os.getenv('OPENAI_MODEL', 'gpt-5-2025-08-07'),
             openai_api_key=os.getenv('OPENAI_API_KEY'),
             temperature=0.7,
         )
@@ -113,8 +149,12 @@ class LanguageLearningAgent:
             response_format=(self.FORMAT_INSTRUCTION, ResponseFormat),
         )
 
-    async def stream(self, query, context_id) -> AsyncIterable[dict[str, Any]]:
-        inputs = {'messages': [('user', query)]}
+    async def stream(self, query, context_id, profile: dict | None = None) -> AsyncIterable[dict[str, Any]]:
+        if profile:
+            preamble = _build_profile_preamble(profile)
+            inputs = {'messages': [('system', preamble), ('user', query)]}
+        else:
+            inputs = {'messages': [('user', query)]}
         config = {'configurable': {'thread_id': context_id}}
 
         for item in self.graph.stream(inputs, config, stream_mode='values'):
@@ -187,6 +227,13 @@ class LLMLanguageLearningAgentExecutor(AgentExecutor):
             raise ServerError(error=InvalidParamsError())
 
         query = context.get_user_input()
+        profile = {}
+        try:
+            if hasattr(context.message, 'metadata') and context.message.metadata:
+                profile = context.message.metadata.get('profile', {})
+        except Exception:
+            profile = {}
+        
         task = context.current_task
         if not task:
             task = new_task(context.message)
@@ -194,7 +241,7 @@ class LLMLanguageLearningAgentExecutor(AgentExecutor):
         updater = TaskUpdater(event_queue, task.id, task.context_id)
 
         try:
-            async for item in self.agent.stream(query, task.context_id):
+            async for item in self.agent.stream(query, task.context_id, profile):
                 is_task_complete = item['is_task_complete']
                 require_user_input = item['require_user_input']
 

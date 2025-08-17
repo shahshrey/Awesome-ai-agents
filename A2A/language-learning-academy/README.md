@@ -1,6 +1,6 @@
 # 🎓 Language Learning Academy - A2A Agent with LangGraph
 
-An intelligent AI-powered language learning assistant built with **A2A (Agent-to-Agent) SDK** and **LangGraph** for advanced conversational learning experiences. This agent provides vocabulary lessons, grammar explanations, conversation practice, and interactive quizzes across multiple languages.
+An intelligent AI-powered language learning assistant built with **A2A (Agent-to-Agent) SDK** and **LangGraph** for advanced conversational learning experiences. This agent provides vocabulary lessons, grammar explanations, conversation practice, and interactive quizzes across multiple languages with **full personalization** and **multi-language interface support**.
 
 ## 🌟 Features
 
@@ -9,9 +9,14 @@ An intelligent AI-powered language learning assistant built with **A2A (Agent-to
 - **💬 Conversation Practice**: Practice real-world conversations with scenario-based dialogues
 - **🧠 Interactive Quizzes**: Test your knowledge with customizable quizzes on vocabulary and grammar
 - **🌍 Translation Services**: Context-aware translation between supported languages
-- **🎯 Personalized Learning**: Adaptive teaching style for beginner, intermediate, and advanced levels
+- **🎯 Personalized Learning**: Fully customizable AI tutor that adapts to your preferences:
+  - **Native Language**: Get explanations in your preferred language (English, Hindi, French, Spanish, German, Italian, Portuguese, Japanese, Chinese, Korean)
+  - **Learning Goals**: Optimize content for Travel, Business, or Exam preparation
+  - **Tutor Persona**: Choose between Friendly, Formal, or Coach teaching styles
+  - **Correction Strictness**: Adjust error correction from Gentle to Standard to Strict
+- **🌐 Multi-Language Interface**: Complete UI translation in English, Hindi (हिन्दी), and French (Français)
 - **🔄 Streaming Responses**: Real-time streaming for interactive learning experiences
-- **🎨 Web Interface**: Beautiful Streamlit-powered UI for seamless interaction
+- **🎨 Beautiful Web Interface**: Modern Streamlit-powered UI with personalized learning dashboard
 
 ## 🏗️ Architecture
 
@@ -20,7 +25,7 @@ This agent combines several cutting-edge technologies:
 - **A2A SDK**: Provides the agent framework and communication protocols
 - **LangGraph**: Orchestrates complex language learning workflows with state management
 - **LangChain**: Powers the LLM integrations and tool management
-- **OpenAI GPT-4**: Advanced language model for natural language understanding
+- **OpenAI gpt-5-2025-08-07**: Advanced language model for natural language understanding
 - **Streamlit**: Modern web interface for user interaction
 - **Structured Logging**: Comprehensive logging with structlog
 
@@ -47,7 +52,7 @@ This agent combines several cutting-edge technologies:
 3. **Set up environment variables:**
    ```bash
    export OPENAI_API_KEY="your-openai-api-key"
-   export OPENAI_MODEL="gpt-4o"  # Optional, defaults to gpt-4o
+   export OPENAI_MODEL="gpt-5-2025-08-07"  # Optional, defaults to gpt-5-2025-08-07
    ```
 
 ### Running the Application
@@ -62,6 +67,7 @@ This will:
 - ✅ Start the Streamlit web interface on `http://localhost:8501`
 - ✅ Open your browser automatically
 - ✅ Health check both services
+- ✅ Launch with full personalization and multi-language support
 
 **Run individual services:**
 
@@ -77,6 +83,7 @@ uv run python -m streamlit run src/language_learning_academy/ui/streamlit_app.py
 
 ## 🌍 Supported Languages
 
+### Learning Languages (8 supported)
 - **Spanish** 🇪🇸
 - **French** 🇫🇷  
 - **German** 🇩🇪
@@ -85,6 +92,37 @@ uv run python -m streamlit run src/language_learning_academy/ui/streamlit_app.py
 - **Japanese** 🇯🇵
 - **Chinese** 🇨🇳
 - **Korean** 🇰🇷
+
+### Interface Languages (3 supported)
+- **English** 🇺🇸 - Complete UI translation
+- **Hindi (हिन्दी)** 🇮🇳 - Complete UI translation  
+- **French (Français)** 🇫🇷 - Complete UI translation
+
+### Native Language Support (10 supported)
+Your AI tutor can provide explanations and meta-commentary in any of these languages:
+**English, Hindi, French, Spanish, German, Italian, Portuguese, Japanese, Chinese, Korean**
+
+## 🎨 Personalization Features
+
+### 🌍 **Multi-Language Experience**
+- **Interface Language**: Switch the entire UI between English, Hindi (हिन्दी), and French (Français)
+- **Native Language**: Get AI explanations in your preferred language (10 supported)
+- **Target Language**: Learn any of 8 supported languages
+
+### 🎯 **Adaptive Learning Style**
+- **Learning Goals**: Optimize content for Travel, Business, or Exam preparation
+- **Tutor Persona**: Choose between Friendly, Formal, or Coach teaching styles  
+- **Correction Level**: Adjust feedback from Gentle to Standard to Strict
+
+### 💾 **Session-Based Preferences**
+- All settings are stored in your browser session
+- Preferences apply to all learning activities
+- Settings reset when you refresh the page (no data persistence)
+
+### 🔄 **Real-Time Adaptation**
+- AI responses immediately adapt to your preferences
+- Teaching style changes based on your persona selection
+- Content focus shifts according to your learning goals
 
 ## 🛠️ Agent Skills
 
@@ -169,7 +207,7 @@ tools = [
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | OpenAI API key | Required |
-| `OPENAI_MODEL` | OpenAI model to use | `gpt-4o` |
+| `OPENAI_MODEL` | OpenAI model to use | `gpt-5-2025-08-07` |
 | `SERVER_HOST` | Agent server host | `0.0.0.0` |
 | `SERVER_PORT` | Agent server port | `9999` |
 
@@ -178,6 +216,30 @@ tools = [
 - **Beginner**: Basic vocabulary and simple grammar
 - **Intermediate**: Complex structures and expanded vocabulary
 - **Advanced**: Nuanced language usage and cultural context
+
+### Personalization Settings
+
+The application offers comprehensive personalization through the sidebar:
+
+#### Profile Settings
+- **Native Language**: Choose from 10 supported languages for AI explanations
+- **UI Language**: Switch interface between English, Hindi, and French
+
+#### Learning Preferences  
+- **Learning Goal**:
+  - **Travel**: Focus on practical phrases, cultural etiquette, and survival vocabulary
+  - **Business**: Emphasize formal language, professional communication, and industry terms
+  - **Exam Prep**: Focus on grammar rules, academic vocabulary, and test-taking strategies
+
+- **Tutor Persona**:
+  - **Friendly**: Warm, encouraging, and supportive with casual language
+  - **Formal**: Professional, academic tone with precise and structured responses
+  - **Coach**: Motivating and goal-oriented with constructive feedback
+
+- **Correction Strictness**:
+  - **Gentle**: Point out errors softly, focus on communication over perfection
+  - **Standard**: Balance error correction with encouragement
+  - **Strict**: Correct all errors thoroughly with detailed explanations
 
 ## 📁 Project Structure
 
@@ -250,6 +312,16 @@ This project is built on the A2A SDK and follows open-source principles. See ind
 **LangGraph errors:**
 - Ensure all tool functions have proper descriptions
 - Verify OpenAI API key has sufficient credits
+
+**Personalization not working:**
+- Check that profile data is being sent in the `metadata` field (not `meta`)
+- Verify that the UI language change triggers a page refresh
+- Ensure all translation keys are present in the `TRANSLATIONS` dictionary
+
+**UI language not changing:**
+- The interface should auto-refresh when changing UI Language in the sidebar
+- If not, manually refresh the browser page
+- Check browser console for any JavaScript errors
 
 ### Logs
 The agent uses structured logging. Check console output for detailed error information with timestamps and context.
